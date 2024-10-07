@@ -5,29 +5,79 @@
     font-weight: 900;
     font-size: 50px;
 }
-
 .routine-header-tr{
     font-weight: 700;
     text-align: center;
+    background-color: lightgray;
 }
 .routine-table{
     margin: 20px auto;
-    padding: 20px;
+    padding: 5px;
 }
 .routine-table tr td{
-    padding: 10px;
-    border: 1px solid black;
+    padding: 5px;
+    border: 1px solid black; 
     
-    font-size: 15px;
+}
+
+.bg-color {
+    background-color: #f2f2f2 !important;
 }
 
 .vertical{
-    writing-mode: vertical-rl;
-    text-orientation:sideways-right;
+    /* writing-mode: vertical-rl; */
+  
     text-align: center;
+    text-transform: uppercase;
     margin: auto;
-    font-size: 30px !important;
-    font-weight: 700;
-    padding: 0;
+    font-size: 1.3em !important;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    background-color: lightgray;
 
+}
+
+.lab-style1 {
+    border: 2px solid !important;
+    border-right: 1px dashed !important;
+}
+.lab-style2 {
+    border: 2px solid !important;
+    border-left: 1px dashed !important;
+}
+.scrollbar {
+    overflow-x: scroll;
+    margin-bottom: 8px;
+}
+.scrollbar-primary::-webkit-scrollbar {
+    background-color: #F5F5F5;
+}
+.scrollbar-primary {
+    scrollbar-color: #4285f4 #f5f5f5;
+}
+.scrollbar-primary::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    background-color: #4285F4;
+}
+.scrollbar-primary::-webkit-scrollbar {
+    height: 8px; /* Set the width of the scrollbar */
+}
+
+@media screen and (max-width: 768px){
+    .routine-table tr td{
+        padding: 5px;
+        border: 1px solid black; 
+        font-size: 10px !important;
+    }
+    .vertical{
+        /* writing-mode: vertical-rl; */
+        text-align: center;
+        text-transform: uppercase;
+        margin: auto;
+        font-size: 1em !important;
+        font-weight: 700;
+        padding: 0;
+        background-color: lightgray;
+    }
 }

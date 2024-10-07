@@ -38,7 +38,7 @@ function Student() {
 
     try {
       const response = await fetch(
-        "https://ice-ps2h27s05-sajib-baruas-projects.vercel.app/students",
+        "https://ice-web-nine.vercel.app/students",
         {
           method: "POST",
           headers: {
@@ -51,8 +51,10 @@ function Student() {
       if (response.status === 201) {
         // Successful submission
         console.log("Student data submitted successfully!");
+        alert("Student login successful!");
       } else {
         // Handle errors
+        alert("Unsuccessful!! Possibly duplicate Email.")
         console.error("Error submitting student data.");
       }
     } catch (error) {
@@ -186,14 +188,14 @@ function Student() {
                 <div className="col-6 mt-5">
                   <div className="row">
                     <div className="col-6">
-                      <button type="submit" className="btn btn-primary">
+                      <button type="submit" className="btn btn-success">
                         Sign up
                       </button>
                     </div>
                     <div className="col-6">
                       <button
                         type="button"
-                        className="btn btn-primary"
+                        className="btn btn-success"
                         onClick={toggleLogin}
                         style={{ display: showLogin ? "none" : "block" }}
                       >
@@ -233,14 +235,14 @@ function Student() {
                 <br />
                 <div className="row mt-5">
                   <div className="col-6">
-                    <button type="submit" className="btn btn-primary">
+                    <button type="submit" className="btn btn-success">
                       Log in
                     </button>
                   </div>
                   <div className="ml-5 col-6">
                     <button
                       type="button"
-                      className="btn btn-primary"
+                      className="btn btn-success"
                       onClick={toggleSignup}
                       style={{ display: showSignup ? "none" : "block" }}
                     >

@@ -1,419 +1,159 @@
-import RoutineTable from "./ser1_components/RoutineTable";
 import "bootstrap/dist/css/bootstrap.css";
-import "../../assets/stylesheets/style.css";
 import "../../assets/stylesheets/ser1-style.css";
-import { Container, Row } from "react-bootstrap";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import RoutineTable from "./ser1_components/RoutineTable";
+import CustomDropdown from "../ser3/CustomDropdown";
+import { Col, Container, Row } from "react-bootstrap";
+import Download from "../../assets/components/Download";
+
 const Routine = () => {
-  const [showMenu, setShowMenu] = useState(false);
-  const toggleMenu = () => {
-    setShowMenu(!showMenu);
-  };
+  const pdfRef = useRef();
+  const [routine, setRoutine] = useState([]);
+  const [yearTerms, setYearTerms] = useState([]);
+  const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [teachersName, setTeachersName] = useState([]);
 
-  const [showTeacherMenu, setTeacherShowMenu] = useState(false);
-  const toggleTeacherMenu = () => {
-    setTeacherShowMenu(!showTeacherMenu);
-  };
+  // useEffect(() => {
+  //   const routineData = JSON.parse(localStorage.getItem("routine"));
+  //   const yearTermsData = JSON.parse(localStorage.getItem("yearTerms"));
+  //   setRoutine(routineData);
+  //   setYearTerms(yearTermsData);
+  // }, []);
 
-  const [showMR, setshowMR] = useState(true);
-  const [showR, setShowR] = useState(false);
-  const [term, setTerm] = useState("");
-
-  const toggleR = (event) => {
-    const { name } = event.target;
-    setTerm(name);
-    setshowMR(!showMR);
-    setShowR(!showR);
-  };
-  const toggleRT = () => {
-    setshowMR(!showMR);
-    setShowR(!showR);
-  };
-
-  const [teachers, setTeachers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [routineError, setRoutineError] = useState("");
 
   useEffect(() => {
-    fetch("https://ice-ps2h27s05-sajib-baruas-projects.vercel.app/teachers")
-      .then((response) => response.json())
-      .then((data) => {
-        setTeachers(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      });
+    const fetchData = async () => {
+      try {
+        let routineId;
+
+        const response1 = await fetch("https://ice-web-nine.vercel.app/serviceId");
+        const data1 = await response1.json();
+        console.log(data1);
+        if (data1.success) {
+          routineId = data1.data[0]["classRoutine"];
+          console.log(routineId);
+
+          const response2 = await fetch(
+            `https://ice-web-nine.vercel.app/classRoutineManagement/data/${routineId}`
+          );
+          const data2 = await response2.json();
+          console.log(data2);
+          if (data2.success) {
+            const data = data2.data;
+            console.log(data);
+            setYearTerms(data.yearTerm);
+            setRoutine(data.overall);
+            setTeachersName(data.routineTeachersName);
+            console.log(data.routineTeachersName);
+
+            localStorage.setItem("routine", JSON.stringify(data.overall));
+            localStorage.setItem("yearTerms", JSON.stringify(data.yearTerm));
+            localStorage.setItem(
+              "routineTeachersName",
+              JSON.stringify(data.routineTeachersName)
+            );
+            setRoutineError("");
+          } else {
+            setRoutineError(data2.error);
+          }
+        } else {
+          setRoutineError(data1.error);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const [routineCommitteeErrorMessage, setRoutineCommitteeErrorMessage] =
+    useState("");
+  const [teacher, setTeacher] = useState(null);
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("teacher"));
+    setTeacher(data);
+    // console.log(data);
+    // console.log(yearTerms);
+  }, []);
+
+  const navigate = useNavigate();
+  const toCreateRoutine = () => {
+    if (teacher?.isInRoutineCommittee) {
+      setRoutineCommitteeErrorMessage("");
+      navigate("/create-routine", { state: { routine, yearTerms } });
+    } else {
+      setRoutineCommitteeErrorMessage(
+        "Sorry! May be you are not logged in or not a member of the Routine Committtee yet!"
+      );
+    }
+  };
+
+  const handleSelectChange = (value) => {
+    setSelectedTeacher(value);
+  };
 
   return (
     <>
-      <div className="routine-header">
-        <h2>Routine</h2>
-      </div>
-      <Container>
+      <Container fluid>
         <Row>
-          <div className="col-8">
-            <div style={{ display: showMR ? "block" : "none" }}>
-              <RoutineTable />
-            </div>
-
-            {/* Another table */}
-            <div style={{ display: showR ? "block" : "none" }}>
-              <table className="routine-table">
-                <tr>
-                  <td className="routine-header-tr">Day</td>
-                  <td className="routine-header-tr">Term,Year</td>
-                  <td className="routine-header-tr">9:00-9:45</td>
-                  <td className="routine-header-tr">9:50-10:35</td>
-                  <td className="routine-header-tr">10:40-11:25</td>
-                  <td className="routine-header-tr">11:30-12:15PM</td>
-                  <td className="routine-header-tr">12:15-1:00PM</td>
-                  <td className="routine-header-tr">1:00-2:00PM</td>
-                  <td className="routine-header-tr">2:00-2:50PM</td>
-                  <td className="routine-header-tr">2:55-3:45PM</td>
-                </tr>
-
-                {/* <!-- Heading end
-        Sunday -->
-            <!-- 1-1 --> */}
-                <tr>
-                  <td>
-                    <strong>
-                      <span className="vertical">Sunday</span>
-                    </strong>
-                  </td>
-                  <td>
-                    <strong>
-                      <span className="text-center">{term}</span>
-                    </strong>
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td rowSpan="5" className="vertical">
-                    Lunch Break
-                  </td>
-                  <td></td>
-                  <td></td>
-                </tr>
-
-                {/* <!-- Heading end
-        Monday -->
-            <!-- 1-1 --> */}
-                <tr>
-                  <td>
-                    <strong>
-                      <span className="vertical">Monday</span>
-                    </strong>
-                  </td>
-                  <td>
-                    <strong>
-                      <span className="text-center">{term}</span>
-                    </strong>
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-
-                {/* <!-- Heading end
-        Tueday --> */}
-                {/* <!-- 1-1 --> */}
-
-                <tr>
-                  <td>
-                    <strong>
-                      <span className="vertical">Tuesday</span>
-                    </strong>
-                  </td>
-                  <td>
-                    <strong>
-                      <span className="text-center">{term}</span>
-                    </strong>
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                {/* <!-- Heading end
-        Wednesday -->
-            <!-- 1-1 --> */}
-                <tr>
-                  <td>
-                    <strong>
-                      <span className="vertical">Wednesday</span>
-                    </strong>
-                  </td>
-                  <td>
-                    <strong>
-                      <span className="text-center">{term}</span>
-                    </strong>
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-
-                {/* <!-- Heading end
-        Thursday --> */}
-                {/* <!-- 1-1 --> */}
-                <tr>
-                  <td>
-                    <strong>
-                      <span className="vertical">Thursday</span>
-                    </strong>
-                  </td>
-                  <td>
-                    <strong>
-                      <span className="text-center">{term}</span>
-                    </strong>
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                {/* <!-- 1-2 --> */}
-
-                {/*  */}
-              </table>
-            </div>
-            {/* another table end */}
-          </div>
-
-          <div className="col-4">
-            {/* <h1>BTNSSS</h1> */}
-            {/* create btn */}
-            <div className="row">
-              <div className="col-12">
-                <Link to="/create-routine">
-                  <button
-                    className="btn btn-primary"
-                    style={{
-                      margin: "30px 10px 10px 30px",
-                      padding: "10px",
-                      width: "100%",
-                    }}
-                  >
-                    Generate Routine
-                  </button>
-                </Link>
-              </div>
-              {/* end of create btn */}
-              {/* student btn */}
-              <div className="col-12">
-                <button
-                  className="btn btn-primary"
-                  style={{
-                    margin: "10px 10px 10px 30px",
-                    padding: "10px",
-                    width: "100%",
-                  }}
-                  onClick={toggleMenu}
-                >
-                  Show Student Routine
-                </button>
-                {/* all semester */}
-              
-                  <div
-                    style={{
-                      display: showMenu ? "block" : "none",
-                    }}
-                  >
-                    <div className="row">
-                      {/* 1-1 1-2 */}
-                      <div className="col-6">
-                        <button
-                          className="btn btn-success"
-                          style={{
-                            margin: "10px 10px 10px 30px",
-                            padding: "10px",
-                            width: "100%",
-                          }}
-                          name="1-1"
-                          onClick={toggleR}
-                        >
-                          1-1
-                        </button>
-                      </div>
-                      <div className="col-6">
-                        <button
-                          className="btn btn-success"
-                          style={{
-                            margin: "10px",
-                            padding: "10px",
-                            width: "100%",
-                          }}
-                          name="1-2"
-                          onClick={toggleR}
-                        >
-                          1-2
-                        </button>
-                      </div>
-                      {/* 1-1 1-2 over */}
-                      {/* 2 1 2-2 */}
-                      <div className="col-6">
-                        <button
-                          className="btn btn-success"
-                          style={{
-                            margin: "10px 10px 10px 30px",
-                            padding: "10px",
-                            width: "100%",
-                          }}
-                          name="2-1"
-                          onClick={toggleR}
-                        >
-                          2-1
-                        </button>
-                      </div>
-                      <div className="col-6">
-                        <button
-                          className="btn btn-success"
-                          style={{
-                            margin: "10px",
-                            padding: "10px",
-                            width: "100%",
-                          }}
-                          name="2-2"
-                          onClick={toggleR}
-                        >
-                          2-2
-                        </button>
-                      </div>
-                      {/* 3-1 3-2 */}
-                      <div className="col-6">
-                        <button
-                          className="btn btn-success"
-                          style={{
-                            margin: "10px 10px 10px 30px",
-                            padding: "10px",
-                            width: "100%",
-                          }}
-                          name="3-1"
-                          onClick={toggleR}
-                        >
-                          3-1
-                        </button>
-                      </div>
-                      <div className="col-6">
-                        <button
-                          className="btn btn-success"
-                          style={{
-                            margin: "10px",
-                            padding: "10px",
-                            width: "100%",
-                          }}
-                          name="3-2"
-                          onClick={toggleR}
-                        >
-                          3-2
-                        </button>
-                      </div>
-                      {/* 4-1 4-2 */}
-                      <div className="col-6">
-                        <button
-                          className="btn btn-success"
-                          style={{
-                            margin: "10px 10px 10px 30px",
-                            padding: "10px",
-                            width: "100%",
-                          }}
-                          name="4-1"
-                          onClick={toggleR}
-                        >
-                          4-1
-                        </button>
-                      </div>
-                      <div className="col-6">
-                        <button
-                          className="btn btn-success"
-                          style={{
-                            margin: "10px",
-                            padding: "10px",
-                            width: "100%",
-                          }}
-                          name="4-2"
-                          onClick={toggleR}
-                        >
-                          4-2
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-              
-                {/* all semester end */}
-              </div>
-              {/* std btn edn teacher btn start */}
-              <div className="col-12">
+          <Col className="mt-1 mb-3 d-flex justify-content-center">
+            <Link to="/alldocuments">
               <button
-                className="btn btn-primary"
+                className="btn btn-success"
                 style={{
-                  margin: "10px 10px 10px 30px",
-                  padding: "10px",
-                  width: "100%",
+                  padding: "7px",
+                  margin: "10px",
+                  width: "20vw",
                 }}
-                onClick={toggleTeacherMenu}
               >
-                Show Teacher Routine
+               All Documents
               </button>
-              {/* specific teacher */}
-              <div
-                style={{
-                  display: showTeacherMenu ? "block" : "none",
-                }}
-              >
-                <div className="row">
-                  {teachers.map((c) => (
-                    <div key={c.id} className="col-6">
-                      <button
-                        className="btn btn-success"
-                        style={{
-                          margin: "10px 10px 10px 30px",
-                          padding: "10px",
-                          width: "100%",
-                          fontSize: "15px",
-                        }}
-                        onClick={toggleRT}
-                      >
-                        {c.firstName} {c.lastName} - {c.teacherCode}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            {/* teacher btn end */}
-            </div>
-
-          
-
-            {/* col end */}
-          </div>
+            </Link>
+            <button
+              className="btn btn-success bg-success bg-gradient "
+              style={{
+                padding: "7px",
+                margin: "10px",
+                width: "20vw",
+              }}
+              onClick={toCreateRoutine}
+            >
+              Generate Routine
+            </button>
+          </Col>
         </Row>
+        <Row>
+          <b>
+            <p className="mx-3 text-danger text-center text-small">
+              {routineError}
+            </p>
+          </b>
+        </Row>
+
+        <CustomDropdown
+          coursesName={teachersName}
+          selectedCourse={selectedTeacher}
+          handleSelectChange={handleSelectChange}
+          title="Teacher"
+        />
+        <br />
       </Container>
+
+      <div className="" ref={pdfRef}>
+        <div className="container">
+          <h4 className="text-center">Class Routine</h4>
+          <hr />
+        </div>
+        <RoutineTable
+          routineProps={routine}
+          yearTermProps={yearTerms}
+          selectedTeacher={selectedTeacher}
+        />
+      </div>
+      <Download pdfRef={pdfRef} fileName={"current-routine.pdf"} />
     </>
   );
 };

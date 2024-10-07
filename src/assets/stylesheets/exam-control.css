@@ -1,0 +1,62 @@
+table{
+    caption-side: top;
+}
+caption {
+  font-size: 20px;
+  font-weight: bold;
+  padding: 10px;
+  background-color: #f2f2f2;
+  caption-side: top
+}
+.exam-table{
+    height: 400px;
+    margin: 20px auto;
+    padding: 20px;
+}
+.exam-table tr td{
+    padding: 10px;
+    border: 1px solid black;
+    text-align: center;
+    font-size: 15px;
+}
+
+#exam-control-head {
+    background-color: lightgray;
+}
+.exam-header{
+   text-decoration: underline;
+    width: 100%;
+    padding: 20px 10px;
+}
+.bg-style {
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background-color: #E5E0FF;
+    padding: 0 5px;
+    border: 1px solid grey;
+}
+.text-small {
+    font-size: 15px;
+}
+.text-small1 {
+    font-size: 20px;
+}
+.text-small2 {
+    font-size: 25px;
+}
+.style-small {
+    width: 200px !important;
+    height: 100px !important;
+}
+
+@media screen and (max-width: 768px){
+    .text-small {
+        font-size: 10px;
+    }
+    .text-small1 {
+        font-size: 13px;
+    }
+    .text-small2 {
+        font-size: 15px;
+    }
+}

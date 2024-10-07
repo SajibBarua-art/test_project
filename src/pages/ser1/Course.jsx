@@ -5,18 +5,24 @@ import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 
 const Course = () => {
-  const courseApi =
-    "https://ice-ps2h27s05-sajib-baruas-projects.vercel.app/courseDetails";
+  const courseApi = "https://ice-web-nine.vercel.app/courseDetails";
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetch(courseApi)
       .then((response) => response.json())
       .then((data) => {
-        setCourses(data);
-        console.log(data);
-        setLoading(false);
+        if(data.success) {
+          setCourses(data);
+          console.log(data);
+          setLoading(false);
+          setError('');
+        } else {
+          setError(data.error);
+          setLoading(false);
+        }
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -24,27 +30,28 @@ const Course = () => {
       });
   }, []);
 
-  if (loading) {
-    return (
-      <div>
-        <h1>Loading...</h1>
-      </div>
-    );
-  }
+  
 
   return (
-    <div
+   <>
+    {
+      loading ?
+      (<div className="spinner-border text-primary" role="status">
+      <span className="visually-hidden">Loading...</span>
+      </div>)
+      :
+       <div
       style={{
         minHeight: "100vh",
       }}
     >
-      <h1 className="text-center m-5">Course Details</h1>
+      <h1 className="text-center mb-3">Course Details</h1>
 
       <Container fluid>
       <div className="row">
         
-            {courses.map((c) => (
-                <div className="col-4" key={c.id}>
+            {courses.data.map((c) => (
+                <div className="col-lg-4 col-sm-6" key={c.id}>
                  <Card style={{ width: "100%", height:"250px", padding: "10px", margin: "20px 10px" }}>
                 <Card.Header> <strong>Course Name: </strong> {c.name}</Card.Header>
                 <ListGroup variant="flush">
@@ -63,6 +70,9 @@ const Course = () => {
       </div>
       </Container>
     </div>
+     
+    }
+   </>
   );
 };
 
