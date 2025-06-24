@@ -20,7 +20,7 @@ const PreviousDoc = () => {
     if(isChecked) {
       try {
         const response = await fetch(
-          `https://ice-web-nine.vercel.app/${databaseName}/data`,
+          `http://localhost:5000/${databaseName}/data`,
           {
             method: "GET",
             headers: {
@@ -53,7 +53,7 @@ const PreviousDoc = () => {
       //console.log("ok6");
       try {
         const response = await fetch(
-          `https://ice-web-nine.vercel.app/${databaseName}/data/${year}/${semester}`,
+          `http://localhost:5000/${databaseName}/data/${year}/${semester}`,
           {
             method: "GET",
             headers: {
@@ -211,7 +211,7 @@ const PreviousDoc = () => {
                     placeholder="e.g., 2022"
                     min="2004"
                     required
-                    max="2100"
+                    max="9999"
                     className="form-control"
                   />
                   <p

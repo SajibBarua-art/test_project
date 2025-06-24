@@ -34,7 +34,7 @@ const FeedbackSection = () => {
     console.log("Form Data:", formData);
     
     try{
-      const response = await fetch('https://ice-web-nine.vercel.app/feedback',{
+      const response = await fetch('http://localhost:5000/feedback',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -173,9 +173,9 @@ const FeedbackSection = () => {
                   rows="2"
                 ></textarea>
               </div>
-              <div className="col-12">
+              <div className="col-12 text-end">
                 <button type="submit" className="btn btn-success">
-                  Submit
+                  Submit Feedback
                 </button>
               </div>
             </form>

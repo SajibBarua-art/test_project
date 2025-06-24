@@ -25,8 +25,11 @@ export const CourseDisUtils = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://ice-web-nine.vercel.app/courseDetails");
+        const response = await fetch("http://localhost:5000/courseDetails");
         const data = await response.json();
+        console.log(data);
+
+        
         if (data.success) {
           setCourseData(data.data);
           setCourseDetailsError("");
@@ -41,7 +44,7 @@ export const CourseDisUtils = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://ice-web-nine.vercel.app/teachers");
+        const response = await fetch("http://localhost:5000/teachers");
         const data = await response.json();
         if (data.success) {
           setTeacher(data.data);
@@ -80,7 +83,7 @@ export const CourseDisUtils = () => {
   const handleYearChange = (event) => {
     const inputValue = event.target.value;
     const parsedYear = parseInt(inputValue, 10);
-    if (!isNaN(parsedYear) && parsedYear >= 2004 && parsedYear <= 2100) {
+    if (!isNaN(parsedYear) && parsedYear >= 2004 && parsedYear <= 9999) {
       setFormData({
         ...formData,
         examYear: parsedYear,
@@ -154,16 +157,55 @@ export const CourseDisUtils = () => {
     }
   };
 
+  const [fetchError, setFetchError] = useState("");
+  const [courseDistributionData, setCourseDistributionData] = useState(false);
+
+  const fetchCourseDistribution = async (year, semester) => {
+    try {
+        // Validate input
+        if (!year) {
+          setFetchError('Exam year is required!');
+          return;
+        }
+        if (!semester) {
+          setFetchError('Please select the above semester!');
+          return;
+        }
+
+        const response = await fetch(`http://localhost:5000/courseDistribution/update/${year}/${semester}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('Course Distribution:', data.data);
+            setCourseDistributionData(data.data);
+            setFetchError("");
+        } else {
+            console.error('Error:', data.error);
+            setView(view^1);
+            setFilteredCourses(filterCourseData());
+            setFetchError("");
+        }
+    } catch (error) {
+        console.error('Request failed:', error);
+    }
+  };
+
+
   const handleView2 = (event) => {
     event.preventDefault();
-    setView(true);
-    setFilteredCourses(filterCourseData());
+
+    const year = formData.examYear;
+    const semester = formData.semester;
+
+    console.log("year: ", year, " semester: ", semester);
+
+    fetchCourseDistribution(year, semester);
   };
 
   const [senderName, setSenderName] = useState("");
   useEffect(() => {
     const teacher = JSON.parse(localStorage.getItem("teacher"));
-    const name = `${teacher.firstName} ${teacher.lastName}`;
+    const name = `${teacher?.firstName} ${teacher?.lastName}`;
     console.log(name);
     setSenderName(name);
   }, []);
@@ -171,61 +213,53 @@ export const CourseDisUtils = () => {
   const [loading, setLoading] = useState(false);
   const [defaults, setDefaults] = useState(false);
   const [courseDistributionError, setCourseDistributionError] = useState("");
-  let serviceId = null;
-  const handleSubmit = async (event) => {
+
+  const handleSave = async (event) => {
     try {
-      // Display an alert to confirm before proceeding
-      const shouldGenerate = window.confirm(
-        "Are you sure you want to submit the course distribution?"
-      );
-
-      if (!shouldGenerate) {
-        // If the user clicks "Cancel" in the alert, do nothing
-        return;
-      }
-
       setLoading(true);
       event.preventDefault();
-
-      console.log(formData);
-
-      const response = await fetch("https://ice-web-nine.vercel.app/courseDistribution", {
+  
+      const response = await fetch("http://localhost:5000/courseDistribution", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error);
       }
-
+  
       const d = await response.json();
-      console.log(d);
       if (d.success) {
         const data = d.data;
-        serviceId = data._id;
-        console.log(data);
         setCourseDistributionError("");
-        console.log(serviceId);
+        return data._id; // Return serviceId
       } else {
         setCourseDistributionError(d.error);
+        return null;
       }
-      // setErrorMessage("");
     } catch (error) {
-      // setErrorMessage(error.message);
       console.error("Error creating exam routine:", error);
+      return null;
     } finally {
       setLoading(false);
       setDefaults(false);
     }
+  };  
 
-    // to save it at pending service
+  const handleSubmit = async (event) => {
+    const serviceId = await handleSave(event); // Get returned ID
+  
+    if (!serviceId) {
+      setCourseDistributionError("Service Id is null!");
+      return; // or handle the error accordingly
+    }
+  
     try {
-      // Make a POST request to your endpoint
-      const response = await fetch("https://ice-web-nine.vercel.app/pendingService", {
+      const response = await fetch("http://localhost:5000/pendingService", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -236,12 +270,12 @@ export const CourseDisUtils = () => {
           senderName,
         }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error);
       }
-
+  
       const d = await response.json();
       console.log("pending: ", d);
       if (!d.success) {
@@ -251,6 +285,7 @@ export const CourseDisUtils = () => {
       console.error("Error:", error);
     }
   };
+  
 
   return {
     courseData,
@@ -264,6 +299,9 @@ export const CourseDisUtils = () => {
     handleYearChange,
     filteredCourses,
     handleTeacherDetailsChange,
+    handleSave,
+    fetchError,
+    courseDistributionData
   };
 };
 

@@ -87,7 +87,7 @@ const ServiceList = (props) => {
   const getApiString = (serviceName) => {
     let apiString = "";
     if(serviceName === "Course Distribution") {
-      apiString = "CourseDistributionManagemen";
+      apiString = "CourseDistributionManagement";
     } else if(serviceName === "Theory Class Routine") {
       apiString = "classRoutineManagement";
     } else if(serviceName === "Theory Exam Routine") {
@@ -113,7 +113,7 @@ const ServiceList = (props) => {
     const callDeleteMethod = async () => {
       try {
         const response = await fetch(
-          `https://ice-web-nine.vercel.app/${getApiString(serviceName)}/delete/${serviceId}`,
+          `http://localhost:5000/${getApiString(serviceName)}/delete/${serviceId}`,
           {
             method: "DELETE",
             headers: {
@@ -145,6 +145,7 @@ const ServiceList = (props) => {
 
     if(readyToDelete) {
       callDeleteMethod();
+      setDeleteLoading(null);
     } else {
       setDeleteLoading(null);
     }
@@ -189,9 +190,9 @@ const ServiceList = (props) => {
             <th>
               <p className="text-success">Make Default</p>
             </th>
-            {/* <th>
+            <th>
               <p className="text-danger">Delete</p>
-            </th> */}
+            </th>
             <th>
               <p className="text-info">View</p>
             </th>
@@ -228,7 +229,7 @@ const ServiceList = (props) => {
                 </p>
               )}
             </td>
-            {/* <td style={{ border: "none" }}>
+            <td style={{ border: "none" }}>
               {deleteLoading === index ? (
                 <Spinner animation="border" role="status" variant="danger">
                   <span className="visually-hidden">Loading...</span>
@@ -251,7 +252,7 @@ const ServiceList = (props) => {
                         </svg>
                 </p>
               )}
-            </td> */}
+            </td>
             <td style={{ border: "none" }}>
               <p className="btn btn-info" onClick={() => handleShow(service)}>
                 <svg

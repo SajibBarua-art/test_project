@@ -12,8 +12,8 @@ const Routine = () => {
 
   console.log(id, state);
   
-  let uri = `https://ice-web-nine.vercel.app/routine/data/${id}/routine`;
-  if(state === 'permanent') uri = `https://ice-web-nine.vercel.app/classRoutineManagement/data/${id}`;
+  let uri = `http://localhost:5000/routine/data/${id}/routine`;
+  if(state === 'permanent') uri = `http://localhost:5000/classRoutineManagement/data/${id}`;
 
   const pdfRef = useRef();
   const [routine, setRoutine] = useState([]);
@@ -61,7 +61,7 @@ const Routine = () => {
           title="Teacher"
         />
         <br />
-        <div className="mt-3 d-flex justify-content-center">
+        {/* <div className="mt-3 d-flex justify-content-center">
           <div>
             <Row>
               <Col>
@@ -94,7 +94,7 @@ const Routine = () => {
               </Col>
             </Row>
           </div>
-        </div>
+        </div> */}
         <Row>
           <p className="mx-3 text-danger text-center text-small">
             {routineCommitteeErrorMessage}

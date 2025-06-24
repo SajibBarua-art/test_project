@@ -48,6 +48,19 @@ import CreateTheoryDutyRoaster from "./pages/DutyRoaster/CreateTheoryDuty";
 import DutyRoaster from "./pages/DutyRoaster/DutyRoaster";
 import CreateTheoryExamRoutine from "./pages/ExamRoutine/CreateTheoryRoutine";
 import ManualTheoryExamRoutine from "./pages/ExamRoutine/ManualTheoryExamRoutine";
+import EditCourses from "./pages/EditCourses/EditCourses";
+import ExternalTeacherDashboard from "./pages/ExternalTeacherDashboard/ExternalTeacherDashboard";
+import CreateExternalTeacher from "./pages/ExternalTeacherDashboard/CreateExternalTeacher";
+import EditCourseDistribution from "./pages/CourseDistribution/EditCourseDistribution";
+import TeacherPriority from "./pages/ser1/ser1_components/TeacherPriority";
+import SlotsPriority from "./pages/ser1/SlotsPriority";
+import EditClassroom from "./pages/EditClassroom/EditClassroom";
+import EditTimeSlot from "./pages/EditTimeSlot/EditTimeSlot";
+import CreateClassRoutine from "./pages/ser1/ser1_components/CreateClassRoutine";
+import TeacherPriorityUpdater from "./pages/ser1/ser1_components/TeacherPriorityUpdater";
+import UpdateSlotsPriority from "./pages/ser1/UpdateSlotsPriority";
+import TeacherSlotsPriority from "./pages/ser1/TeacherSlotsPriority";
+import UpdateTeacherSlotsPriority from "./pages/ser1/UpdateTeacherSlotsPriority";
 
 export const UserContext = createContext();
 
@@ -76,7 +89,7 @@ const App = () => {
   // // to load all the vital data as soon as possible
   // useEffect(() => {
   //   const saveRoutineData = () => {
-  //     fetch("https://ice-web-nine.vercel.app/routine")
+  //     fetch("http://localhost:5000/routine")
   //     .then((response) => response.json())
   //     .then((data) => {
   //       localStorage.setItem('routine', JSON.stringify(data[0].overall));
@@ -88,7 +101,7 @@ const App = () => {
     
   //   const saveExamCommitteeData = () => {
   //     fetch(
-  //       "https://ice-web-nine.vercel.app/examCommittee"
+  //       "http://localhost:5000/examCommittee"
   //     )
   //     .then((response) => response.json())
   //     .then((data) => {
@@ -153,10 +166,25 @@ const App = () => {
             <Route path="/lab-exam-routine" element={<LabRoutine/>}/>
 
             <Route path="/routine/:state/:id" element={<TemporaryRoutineShow />} />
+            <Route path="/update/priority/teacher/:year/:semester" element={<TeacherPriorityUpdater />} />
+            <Route path="/course-distribution/:state" element={<EditCourseDistribution />} />
             <Route path="/course-distribution/:state/:id" element={<TemporaryCourseDistribution />} />
             <Route path="/exam-control/:state/:id" element={<ExamControl/>} />
             <Route path="/theory-duty-roaster/:state/:id" element={<DutyRoaster/>}/>
             <Route path="/theory-exam-routine/:state/:id" element={<TheoryRoutine/>}/>
+
+            <Route path="/edit-courses" element={<EditCourses />} />
+            <Route path="/edit-classroom" element={<EditClassroom />} />
+            <Route path="/edit-timeslot" element={<EditTimeSlot />} />
+
+            <Route path="/external-teacher-dashboard" element={<ExternalTeacherDashboard />} />
+            <Route path="/create-external-teacher" element={<CreateExternalTeacher />} />
+
+            <Route path="/teacherSlotsPriority" element={<TeacherSlotsPriority />} />
+            <Route path="/routine/teacherPriority" element={<TeacherPriority/>} />
+            <Route path="/teacherSlotsPriority/update/:year/:semester" element={ <UpdateTeacherSlotsPriority />} />
+
+            <Route path="/create-class-routine" element={ <CreateClassRoutine/> } />
 
             {/* Services that are shown only to the register user */}
             <Route path="/" element={<PrivateRoute />} >

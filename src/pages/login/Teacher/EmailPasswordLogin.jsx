@@ -50,14 +50,17 @@ const EmailPasswordLogin = (props) => {
           setUserState(true);
           localStorage.setItem('user', JSON.stringify(user));
 
-          const teacherApi = `https://ice-web-nine.vercel.app/teachers/by-email/${user.email}`;
+          const teacherApi = `http://localhost:5000/teachers/by-email/${user.email}`;
+          console.log("Fetching teacher data from:", teacherApi);
           fetch(teacherApi)
           .then((response) => response.json())
           .then((data) => {
             if(data.success) {
+              console.log("Teacher data:", data.data);
               localStorage.setItem('teacher', JSON.stringify(data.data));
               setLoginError('');
             } else {
+              console.error("Error fetching teacher data:", data.error);
               setLoginError(data.error);
             }
             
