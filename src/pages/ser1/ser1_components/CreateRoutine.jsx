@@ -2,7 +2,6 @@ import "bootstrap/dist/css/bootstrap.css";
 import "../../../assets/stylesheets/ser1-style.css";
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import RoutineTable from "./RoutineTable";
 import RoutineFunction from "./RoutineFunction";
 import Download from "./../../../assets/components/Download";
 import ManualRoutineTable from "./ManualRoutineTable";
@@ -45,7 +44,7 @@ const CreateRoutine = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/courseDetails");
+        const response = await fetch("https://teachercopilot.vercel.app/courseDetails");
         const data = await response.json();
         if (data.success) {
           setCourseData(data.data);
@@ -61,7 +60,7 @@ const CreateRoutine = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/teachers");
+        const response = await fetch("https://teachercopilot.vercel.app/teachers");
         const data = await response.json();
         if (data.success) {
           setTeacher(data.data);
@@ -120,7 +119,7 @@ const CreateRoutine = () => {
       console.log(formData);
 
       const response = await fetch(
-        "http://localhost:5000/generateRandomRoutine",
+        "https://teachercopilot.vercel.app/generateRandomRoutine",
         {
           method: "POST",
           headers: {
@@ -187,7 +186,7 @@ const CreateRoutine = () => {
       console.log(formData);
 
       const response = await fetch(
-        "http://localhost:5000/generateRandomRoutine/data",
+        "https://teachercopilot.vercel.app/generateRandomRoutine/data",
         {
           method: "POST",
           headers: {
@@ -227,7 +226,7 @@ const CreateRoutine = () => {
     // to save it at pending service
     try {
       // Make a POST request to your endpoint
-      const response = await fetch("http://localhost:5000/pendingService", {
+      const response = await fetch("https://teachercopilot.vercel.app/pendingService", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -433,6 +432,7 @@ const CreateRoutine = () => {
                         yearTermProps={yearTerms}
                         courseCodeToObj={courseCodeToObj}
                         teacherCodeToObj={teacherCodeToObj}
+                        timeslot={routineData?.timeslot}
                       />
                     </div>
                     <div className="mb-3 mt-3 d-flex justify-content-center">

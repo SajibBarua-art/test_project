@@ -13,6 +13,7 @@ const Routine = () => {
   const [yearTerms, setYearTerms] = useState([]);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [teachersName, setTeachersName] = useState([]);
+  const [timeslot, setTimeslot] = useState([]);
 
   // useEffect(() => {
   //   const routineData = JSON.parse(localStorage.getItem("routine"));
@@ -28,7 +29,7 @@ const Routine = () => {
       try {
         let routineId;
 
-        const response1 = await fetch("http://localhost:5000/serviceId");
+        const response1 = await fetch("https://teachercopilot.vercel.app/serviceId");
         const data1 = await response1.json();
         console.log(data1);
         if (data1.success) {
@@ -36,7 +37,7 @@ const Routine = () => {
           console.log(routineId);
 
           const response2 = await fetch(
-            `http://localhost:5000/classRoutineManagement/data/${routineId}`
+            `https://teachercopilot.vercel.app/classRoutineManagement/data/${routineId}`
           );
           const data2 = await response2.json();
           console.log(data2);
@@ -49,6 +50,7 @@ const Routine = () => {
             console.log("teachersName: ", data.routineTeachersName);
             
             setTeachersName(data.routineTeachersName);
+            setTimeslot(data.timeslot);
             console.log(data.routineTeachersName);
 
             localStorage.setItem("routine", JSON.stringify(data.overall));
@@ -101,7 +103,7 @@ const Routine = () => {
   return (
     <>
       <Container fluid>
-        <Row>
+        {/* <Row>
           <Col className="mt-1 mb-3 d-flex justify-content-center">
             <Link to="/alldocuments">
               <button
@@ -127,7 +129,7 @@ const Routine = () => {
               Generate Routine
             </button>
           </Col>
-        </Row>
+        </Row> */}
         <Row>
           <b>
             <p className="mx-3 text-danger text-center text-small">
@@ -154,6 +156,7 @@ const Routine = () => {
           routineProps={routine}
           yearTermProps={yearTerms}
           selectedTeacher={selectedTeacher}
+          timeslot={timeslot}
         />
       </div>
       <Download pdfRef={pdfRef} fileName={"current-routine.pdf"} />

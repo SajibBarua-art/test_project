@@ -18,8 +18,10 @@ const CreateClassRoutine = () => {
   const [teacherSlotsPriority, setTeacherSlotsPriority] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [routineCreationError, setRoutineCreationError] = useState('');
   const [routine, setRoutine] = useState([]);
   const [yearTerms, setYearTerms] = useState([]);
+  const [timeslot, setTimeslot] = useState([]);
   const [defaults, setDefaults] = useState(true);
   const [dataSetFound, setDataSetFound] = useState(false);
 
@@ -79,7 +81,7 @@ const CreateClassRoutine = () => {
       console.log(formData);
 
       const response = await fetch(
-        "http://localhost:5000/generateRandomRoutine/data",
+        "https://teachercopilot.vercel.app/generateRandomRoutine/data",
         {
           method: "POST",
           headers: {
@@ -102,10 +104,10 @@ const CreateClassRoutine = () => {
         const data = d.data;
         serviceId = data._id;
         console.log(data);
-        setError("");
+        setRoutineCreationError("")
         console.log(serviceId);
       } else {
-        setError(d.error);
+        setRoutineCreationError(d.error);
       }
       // setErrorMessage("");
     } catch (error) {
@@ -119,7 +121,7 @@ const CreateClassRoutine = () => {
     // to save it at pending service
     try {
       // Make a POST request to your endpoint
-      const response = await fetch("http://localhost:5000/pendingService", {
+      const response = await fetch("https://teachercopilot.vercel.app/pendingService", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -139,9 +141,9 @@ const CreateClassRoutine = () => {
       const d = await response.json();
       console.log("pending: ", d);
       if (!d.success) {
-        setError(d.error);
+        setRoutineCreationError(d.error);
       } else {
-        setError("");
+        setRoutineCreationError("");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -169,7 +171,7 @@ const CreateClassRoutine = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/courseDetails");
+        const response = await fetch("https://teachercopilot.vercel.app/courseDetails");
         const data = await response.json();
         if (data.success) {
           setCourseData(data.data);
@@ -185,7 +187,7 @@ const CreateClassRoutine = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/teachers");
+        const response = await fetch("https://teachercopilot.vercel.app/teachers");
         const data = await response.json();
         if (data.success) {
           setTeacher(data.data);
@@ -244,17 +246,15 @@ const CreateClassRoutine = () => {
       console.log(formData);
 
       const response = await fetch(
-        "http://localhost:5000/generateRandomRoutine",
+        "https://teachercopilot.vercel.app/generateRandomRoutine",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            year: formData.examYear,
-            semester: formData.semester,
-            classStartDate: formData.startDate,
-            routineDetails: formData.routineDetails,
+            year: formData.year,
+            semester: formData.semester
           }),
         }
       );
@@ -271,9 +271,10 @@ const CreateClassRoutine = () => {
         setRoutineData(data);
         setRoutine(data.overall);
         setYearTerms(data.yearTerm);
-        setError("");
+        setTimeslot(data.timeslot);
+        setRoutineCreationError("");
       } else {
-        setError(d.error);
+        setRoutineCreationError(d.error);
       }
       // setErrorMessage("");
     } catch (error) {
@@ -304,7 +305,7 @@ const CreateClassRoutine = () => {
       console.log(courseDistribution);
 
       const response = await fetch(
-        "http://localhost:5000/generatePriorityBasedClassRoutine",
+        "https://teachercopilot.vercel.app/generatePriorityBasedClassRoutine",
         {
           method: "POST",
           headers: {
@@ -329,9 +330,10 @@ const CreateClassRoutine = () => {
         setRoutineData(data);
         setRoutine(data.overall);
         setYearTerms(data.yearTerm);
-        setError("");
+        setTimeslot(data.timeslot);
+        setRoutineCreationError("");
       } else {
-        setError(d.error);
+        setRoutineCreationError(d.error);
       }
       // setErrorMessage("");
     } catch (error) {
@@ -353,7 +355,7 @@ const CreateClassRoutine = () => {
   const fetchCourseDistribuition = async () => {
     setCourseDistributionLoader(LOADING);
     fetch(
-      `http://localhost:5000/CourseDistributionManagement/data/${formData.year}/${formData.semester}`
+      `https://teachercopilot.vercel.app/CourseDistributionManagement/data/${formData.year}/${formData.semester}`
     )
       .then((response) => response.json())
       .then((d) => {
@@ -380,7 +382,7 @@ const CreateClassRoutine = () => {
   const fetchPrioritySlots = async () => {
     setSlotsPriorityLoader(LOADING);
     fetch(
-      `http://localhost:5000/priority/slots/data/${formData.year}/${formData.semester}`
+      `https://teachercopilot.vercel.app/priority/slots/data/${formData.year}/${formData.semester}`
     )
       .then((response) => response.json())
       .then((d) => {
@@ -405,7 +407,7 @@ const CreateClassRoutine = () => {
     }
 
   useEffect(() => {
-    console.log("counter: ", counter);
+    // console.log("counter: ", counter);
 
     if (selectedMode === "priority" && counter === 2) {
       setDataSetFound(true);
@@ -736,7 +738,7 @@ const CreateClassRoutine = () => {
               </div>
             </div>
           ) : (
-            (error === '') ? (
+            (routineCreationError === '') ? (
               <div>
                 <div ref={pdfRef}>
                   <ManualRoutineTable
@@ -744,6 +746,7 @@ const CreateClassRoutine = () => {
                     yearTermProps={yearTerms}
                     courseCodeToObj={courseCodeToObj}
                     teacherCodeToObj={teacherCodeToObj}
+                    timeslot={timeslot}
                   />
                 </div>
                 <div className="mb-3 mt-3 d-flex justify-content-center">
@@ -760,7 +763,7 @@ const CreateClassRoutine = () => {
                 </div>
               </div>
             ) : (
-              <b><p className="text-danger text-center m-4">{error}</p></b>
+              <b><p className="text-danger text-center m-4">{routineCreationError}</p></b>
             )
           )
         )

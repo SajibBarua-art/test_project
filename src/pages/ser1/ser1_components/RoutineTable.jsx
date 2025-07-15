@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Container, ListGroup, Row } from "react-bootstrap";
 
 const RoutineTable = (props) => {
-  const { routineProps, yearTermProps, selectedTeacher } = props;
+  const { routineProps, yearTermProps, selectedTeacher, timeslot } = props;
   const [routine, setRoutine] = useState([]);
   const [modifiedRoutine, setModifiedRoutine] = useState([]);
   const [overall, setOverall] = useState([]);
@@ -48,7 +48,7 @@ const RoutineTable = (props) => {
         if (yearTerm === 0) {
           row.push(
             <td rowSpan={yearTerms.length}  className="vertical">
-                <p style={{transform: 'rotate(-90deg)',  marginBlockStart: '0em', marginBlockEnd:'0em',}}>
+                <p>
                   <strong>
                   {days[day]}
                   </strong>
@@ -74,7 +74,7 @@ const RoutineTable = (props) => {
                className="vertical"
               >
              <strong>
-             <p style={{transform: 'rotate(-90deg)', marginBlockStart: '0em', marginBlockEnd:'0em'}}> Lunch Break</p>
+             <p> Lunch Break</p>
              </strong>
               </td>
             );
@@ -196,14 +196,11 @@ const RoutineTable = (props) => {
                   <tr>
                     <td className="routine-header-tr">Day</td>
                     <td className="routine-header-tr">Term, Year</td>
-                    <td className="routine-header-tr">9:00-9:45</td>
-                    <td className="routine-header-tr">9:50-10:35</td>
-                    <td className="routine-header-tr">10:40-11:25</td>
-                    <td className="routine-header-tr">11:30-12:15PM</td>
-                    <td className="routine-header-tr">12:15-1:00PM</td>
-                    <td className="routine-header-tr">1:00-2:00PM</td>
-                    <td className="routine-header-tr">2:00-2:50PM</td>
-                    <td className="routine-header-tr">2:55-3:45PM</td>
+                    {timeslot?.map((t, index) => (
+                      <td key={index} className="routine-header-tr">
+                        {`${t.start}-${t.end}`}
+                      </td>
+                    ))}
                   </tr>
                 </thead>
                 <thead>
